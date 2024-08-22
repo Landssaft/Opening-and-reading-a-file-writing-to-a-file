@@ -1,3 +1,7 @@
+import os.path
+import os
+
+
 with open('write.txt', encoding='utf-8') as file:
     cook_book = {}
     for i in file:
@@ -12,33 +16,30 @@ with open('write.txt', encoding='utf-8') as file:
     cook_book[recepie_name] = ingredients
 
 
-def get_shop_list_by_dishes(person_count, **dishes):
-    for p in ingredients:
-        if p == dishes:
-            quantity = quantity * person_count
-            print(dishes)
-print(cook_book)
+def get_shop_list_by_dishes(person_count: int, dishes: list):
+    result = {}
+    for dish in dishes:
+        if dish in cook_book:
+            for consist in cook_book[dish]:
+                if consist['product'] in result:
+                    result[consist['product']]['quantity'] += consist['quantity'] * person_count
+                else:
+                    result[consist['product']] = {'measure': consist['measure'],'quantity': (consist['quantity'] * person_count)}
+        else:
+            print('В книге нет этого блюда')
+    print(result)
+get_shop_list_by_dishes(['Омлет', 'Омлет'], 2)
 
 
-with open('1.txt', 'rt', encoding='utf-8') as f_1:
-    def count_lines('1.txt', chunk_size=1 << 13):
-        with open('1.txt') as file:
+def read_files(directory):
+    directory = "D:\directory"
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            with open(file_path, "r") as file:
+
+    def count_lines(directory, chunk_size=1 << 13):
+        with open(directory,'w') as file:
             return sum(chunk.count('\n')
                        for chunk in iter(lambda: file.read(chunk_size), ''))
-
-
-with open('2.txt', 'rt', encoding='utf-8') as f_1:
-    def count_lines('2.txt', chunk_size=1 << 13):
-        with open('2.txt') as file:
-            return sum(chunk.count('\n')
-                       for chunk in iter(lambda: file.read(chunk_size), ''))
-
-
-with open('3.txt', 'rt', encoding='utf-8') as f_1:
-    def count_lines('3.txt', chunk_size=1 << 13):
-        with open('3.txt') as file:
-            return sum(chunk.count('\n')
-                       for chunk in iter(lambda: file.read(chunk_size), ''))
-
-
-f.write('1.txt','2.txt','3.txt')
+                       f.write('D:\directory\the_source_file.txt')
