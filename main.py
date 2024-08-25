@@ -2,16 +2,12 @@ import os.path
 import os
 
 
-ST_TITLE = 1
-ST_COUNT = 2
-ST_INGREDIENTS = 3
-
-
-cook_book = {}
-state = ST_TITLE
-
-
 with open("write.txt", encoding='utf-8') as f:
+    ST_TITLE = 1
+    ST_COUNT = 2
+    ST_INGREDIENTS = 3
+    cook_book = {}
+    state = ST_TITLE
     for line in f:
         line = line.strip()
         if not line: continue
