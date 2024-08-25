@@ -2,44 +2,55 @@ import os.path
 import os
 
 
-with open('write.txt', encoding='utf-8') as file:
-    cook_book = {}
-    for i in file:
-        recepie_name = i.strip()
-        ingredients_count = file.readline()
-        ingredients = []
-        for p in range(int(ingredients_count)):
-            recepie = file.readline().strip().split(' | ')
-            product, quantity, word = recepie
-            ingredients.append({'product': product, 'quantity': quantity, 'measure': word})
-        file.readline()
-    cook_book[recepie_name] = ingredients
+ST_TITLE = 1
+ST_COUNT = 2
+ST_INGREDIENTS = 3
 
 
-def get_shop_list_by_dishes(person_count: int, dishes: list):
-    result = {}
-    for dish in dishes:
-        if dish in cook_book:
-            for consist in cook_book[dish]:
-                if consist['product'] in result:
-                    result[consist['product']]['quantity'] += consist['quantity'] * person_count
-                else:
-                    result[consist['product']] = {'measure': consist['measure'],'quantity': (consist['quantity'] * person_count)}
-        else:
-            print('В книге нет этого блюда')
-    print(result)
+cook_book = {}
+state = ST_TITLE
+
+
+with open("write.txt", encoding='utf-8') as f:
+    for line in f:
+        line = line.strip()
+        if not line: continue
+        if state == ST_TITLE:
+            title = line
+            cook_book[title] = []
+            state = ST_COUNT
+        elif state == ST_COUNT:
+            count = int(line)
+            state = ST_INGREDIENTS
+        else: # if state == ST_INGREDIENTS:
+            data = [x.strip() for x in line.split('|')]
+            data[1] = int(data[1])
+            cook_book[title].append(dict(zip(('ingredient_name', 'quantity', 'measure'), data)))
+            count -= 1
+            if count == 0:
+                state = ST_TITLE
+
+
+def get_shop_list_by_dishes(person_count, dishes):
+    for p in cook_book[title]:
+        if p == dishes:
+            quantity = quantity * person_count
+            print(result)
 get_shop_list_by_dishes(['Омлет', 'Омлет'], 2)
 
 
-def read_files(directory):
-    directory = "D:\directory"
-    for root, dirs, files in os.walk(directory):
-        for filename in files:
-            file_path = os.path.join(root, filename)
-            with open(file_path, "r") as file:
+def readfile(path: str):
+    path = 'D:\directory'
+    files_list = os.listdir(path)
+    d = {}
+    for i in range(1, 3):
+        name = f'{i}.txt'
+        with open(name, 'r', encoding='utf-8') as f:
+            d[name] = [x for x in f.read().splitlines() if x]
 
-    def count_lines(directory, chunk_size=1 << 13):
-        with open(directory,'w') as file:
-            return sum(chunk.count('\n')
-                       for chunk in iter(lambda: file.read(chunk_size), ''))
-                       f.write('D:\directory\the_source_file.txt')
+    with open('the_source_file.txt', 'w', encoding='utf-8') as file:
+        for k, v in sorted(d.items(), key=lambda x: -len([x[1]])):
+            file.write(k + '\n')
+            file.write(str(len(v)) + '\n')
+            file.write('\n'.join(v))
+            file.write('\n')
