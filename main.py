@@ -1,36 +1,35 @@
-import os.path
-import os
+from pprint import pprint
 
 
-def readfile():
-    with open("write.txt", encoding='utf-8') as f: #создание словаря
-        ST_TITLE = 1
-        ST_COUNT = 2
-        ST_INGREDIENTS = 3
-        cook_book = {}
-        state = ST_TITLE
-        for line in f:
-            line = line.strip()
-            if not line: continue
-            if state == ST_TITLE:
-                title = line
-                cook_book[title] = []
-                state = ST_COUNT
-            elif state == ST_COUNT:
-                count = int(line)
-                state = ST_INGREDIENTS
-            else: # if state == ST_INGREDIENTS:
-                data = [x.strip() for x in line.split('|')]
-                data[1] = int(data[1])
-                cook_book[title].append(dict(zip(('ingredient_name', 'quantity', 'measure'), data)))
-                count -= 1
-                if count == 0:
-                    state = ST_TITLE
+with open('write.txt', 'rt', encoding='utf-8') as file:
+    cook_book = {}
+    dishes = ''
+    for x in file:
+        x = x.strip()
+        if x.isdigit():
+            continue
+        elif x and '|' not in x:
+            cook_book[x] = []
+            dishes = x
+        elif x and '|' in x:
+            a, b, c = x.split(" | ")
+            cook_book.get(dishes).append(dict(ingredient_name=a, quantity=int(b), measure=c))
+            pprint(cook_book)
 
 
-def get_shop_list_by_dishes(person_count, dishes): #функция, которая на вход принимает список блюд из cook_book и количество персон для кого мы будем готовить
-    for p in dictionary(cook_book[title]):
-        if p == dishes:
-            quantity = quantity * person_count
-            print(dishes)
-    get_shop_list_by_dishes(['Омлет', 'Омлет'], 2)
+def get_shop_list_by_dishes(dishes_list, person_count):
+    shop_list = {}
+    for dish in dishes_list:
+        if dish in cook_book:
+            for ingredient in cook_book[dish]:
+                if ingredient['ingredient_name'] in shop_list:
+                    shop_list[ingredient['ingredient_name']]['quantity'] += ingredient['quantity'] * person_count
+                else:
+                    shop_list[ingredient['ingredient_name']] = ({'measure': ingredient['measure'], 'quantity':
+                                                                (ingredient['quantity'] * person_count)})
+        else:
+            print('Этого блюда нет в книге')
+    return shop_list
+
+
+pprint(get_shop_list_by_dishes(['Омлет', 'Омлет'], 2))
